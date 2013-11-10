@@ -33,7 +33,13 @@ for (my $i = 0; $i < $ARGV[0]; $i++)
     print BIGLIB "arg1 += arg2 / arg1;\n";
     print BIGLIB "return arg1 + arg2;\n";
     print BIGLIB "}\n\n";
+    if ($i % 10000 == 0)
+    {
+       print "Processed chunk of 10000 functions\n"; 
+    }
 }
+
+print "Compiling the generated library\n";
 
 # Compile bigLib.cc
 `g++ -c bigLib.cc`;
