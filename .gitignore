@@ -3,3 +3,4 @@ src/*.log
 src/*.txt
 binary
 binary.*
+scripts/bigLib.*
