@@ -1,3 +1,8 @@
+
+//
+// Code Source : http://stackoverflow.com/questions/7259363/measuring-numa-non-uniform-memory-access-no-observable-asymmetry-why
+//
+
 #include <numa.h>
 #include <iostream>
 #include <boost/thread/thread.hpp>
