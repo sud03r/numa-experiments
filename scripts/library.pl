@@ -42,7 +42,9 @@ for (my $i = 0; $i < $ARGV[0]; $i++)
 print "Compiling the generated library\n";
 
 # Compile bigLib.cc
-`g++ -c bigLib.cc`;
+#`g++ -c bigLib.cc`;
+# trying gcc to generate a shared library out of this
+`gcc -fPIC -g -c bigLib.cc -o bigLib.o`;
 
 # Print size for generated bigLib.o
 my $report = `size bigLib.o`;
