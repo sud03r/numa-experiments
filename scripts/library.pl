@@ -38,15 +38,16 @@ for (my $i = 0; $i < $ARGV[0]; $i++)
        print "Processed chunk of 10000 functions\n"; 
     }
 }
-
+close(BIGLIB);
 print "Compiling the generated library\n";
 
 # Compile bigLib.cc
 #`g++ -c bigLib.cc`;
 # trying gcc to generate a shared library out of this
 `gcc -fPIC -g -c bigLib.cc -o bigLib.o`;
+`gcc -shared bigLib.o -o bigLib.so`;
 
 # Print size for generated bigLib.o
-my $report = `size bigLib.o`;
-print "Generated bigLib.o with following size information:\n";
+my $report = `size bigLib.so`;
+print "Generated bigLib.so with following size information:\n";
 print "$report";
