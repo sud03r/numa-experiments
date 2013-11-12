@@ -25,6 +25,7 @@ for (my $i = 0; $i < $ARGV[0]; $i++)
     print DRIVER "  \n";
 }
 
+print DRIVER "  printf(\"driver.cc done!\\n\");\n";
 print DRIVER "  return t;\n";
 print DRIVER "}\n\n";
 close(DRIVER);
