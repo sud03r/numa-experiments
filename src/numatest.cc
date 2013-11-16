@@ -68,6 +68,11 @@ void thread2(void* x, size_t core, size_t N, size_t M)
 
 int main(int argc, const char **argv)
 {
+    // Call driverMain which calls the bigLibrary functions.
+    extern int driverMain();
+    driverMain();
+    exit(0);
+
     int numcpus = numa_num_task_cpus();
     std::cout << "numa_available() " << numa_available() << std::endl;
     numa_set_localalloc();

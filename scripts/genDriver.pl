@@ -10,7 +10,7 @@ open (DRIVER , ">driver.cc") or die "Couldn't open driver.cc for writing";
 print DRIVER "#include <stdlib.h>\n";
 print DRIVER "#include <stdio.h>\n";
 
-print DRIVER "int main()\n";
+print DRIVER "int driverMain()\n";
 print DRIVER "{\n";
 print DRIVER "  int t = 0;\n";
 print DRIVER "  \n";

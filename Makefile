@@ -4,10 +4,9 @@ CC = g++ -std=c++0x
 LIBS = -lpthread -lboost_thread -lnuma
 BIGLIB = ./lib/bigLib.so
 
-OBJ = $(BUILD_DIR)/numatest.o
-SRC = $(SRC_DIR)/numatest.cc
+BIGLIBDEPS = $(BUILD_DIR)/numatest.o $(BUILD_DIR)/driver.o
 
-all: binary binary.debug bigLibBinary
+all: bigLibBinary
 
 bin/%.o : src/%.cc
 	$(CC) -c -o $@ $<
@@ -18,14 +17,14 @@ binary: $(BUILD_DIR)/numatest.o
 binary.debug: $(OBJ)
 	$(CC) -g $< $(LIBS) -o $@
 
-bigLibBinary: $(BUILD_DIR)/driver.o
-	$(CC) $< $(BIGLIB) -o $@
+bigLibBinary: $(BIGLIBDEPS)
+	$(CC) $(BIGLIBDEPS) $(BIGLIB) $(LIBS) -o $@
 
 run : runBigLib
 
 runBigLib :
 	LD_LIBRARY_PATH=./lib/:$$LD_LIBRARY_PATH  ./bigLibBinary
 clean:
-	\rm -f binary binary.debug bin/*
+	\rm -f binary binary.debug bin/* bigLibBinary
 
 .PHONY: clean run runBigLib
