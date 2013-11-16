@@ -18,13 +18,6 @@ void pin_to_core(int core)
     pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &cpuset);
 }
 
-ostream& operator<<(std::ostream& os, const bitmask& bm)
-{
-    for(size_t i=0;i<bm.size;++i)
-        os << numa_bitmask_isbitset(&bm, i);
-    return os;
-}
-
 void threadFunc(int core)
 {
     pin_to_core(core);
@@ -39,18 +32,23 @@ void threadFunc(int core)
 
 int main(int argc, const char **argv)
 {
-    int numcpus = numa_num_task_cpus();
-    cout << "numa_available() " << numa_available() << endl;
-    numa_set_localalloc();
-
-    // This displays a bitset of cores on each node
-    bitmask* bm = numa_bitmask_alloc(numcpus);
-    for (int i=0; i <= numa_max_node() ; i++)
+    if (numa_available() != 0)
     {
-        numa_node_to_cpus(i, bm);
-        std::cout << "numa node " << i << " " << *bm << " " << numa_node_size(i, 0) << std::endl;
+        cout << "NUMA not supported on this machine" << endl;
+        exit(1);
     }
-    numa_bitmask_free(bm);
+
+    int numCores = numa_num_task_cpus();
+    int numSockets = numa_max_node() + 1;
+    cout << "NUMA machine with " << numCores << " cores and " << numSockets << " Socket(s)" << endl;
+    for (int coreIdx = 0; coreIdx < numSockets ; coreIdx++)
+    {
+        // 4 sockets, each with 6 cores with core 
+        // Ids as : 4*i, 4*i + 1, 4*i + 2, 4*i + 3 where i = 0..5
+        // This implies, core 0, 1, 2, 3 will lie on different sockets
+        boost::thread t(boost::bind(&threadFunc, coreIdx));
+        t.join();
+    }
     return 0;
 }
 
