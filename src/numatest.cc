@@ -9,6 +9,8 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <pthread.h>
 
+using namespace boost::posix_time;
+
 void pin_to_core(size_t core)
 {
     cpu_set_t cpuset;
@@ -32,17 +34,18 @@ void* thread1(void** x, size_t core, size_t N, size_t M)
 
     void* y = numa_alloc_local(N);
 
-    boost::posix_time::ptime t1 = boost::posix_time::microsec_clock::universal_time();
+    ptime t1 = microsec_clock::universal_time();
 
     char c;
-    for (size_t i(0);i<M;++i)
-        for(size_t j(0);j<N;++j)
+    for (int i = 0; i < M ; ++i)
+    {
+        for(int j = 0; j < N; ++j)
         {
             *(((char*)y) + ((j * 1009) % N)) += 1;
         }
-
-    boost::posix_time::ptime t2 = boost::posix_time::microsec_clock::universal_time();
-
+    }
+    
+    ptime t2 = microsec_clock::universal_time();
     std::cout << "Elapsed read/write by same thread that allocated on core " << core << ": " << (t2 - t1) << std::endl;
 
     *x = y;
@@ -52,27 +55,22 @@ void thread2(void* x, size_t core, size_t N, size_t M)
 {
     pin_to_core(core);
 
-    boost::posix_time::ptime t1 = boost::posix_time::microsec_clock::universal_time();
+    ptime t1 = microsec_clock::universal_time();
+    // Call driverMain which calls the bigLibrary functions.
+    extern int driverMain();
+    driverMain();
 
     char c;
     for (size_t i(0);i<M;++i)
         for(size_t j(0);j<N;++j)
-        {
             *(((char*)x) + ((j * 1009) % N)) += 1;
-        }
 
-    boost::posix_time::ptime t2 = boost::posix_time::microsec_clock::universal_time();
-
+    ptime t2 = microsec_clock::universal_time();
     std::cout << "Elapsed read/write by thread on core " << core << ": " << (t2 - t1) << std::endl;
 }
 
 int main(int argc, const char **argv)
 {
-    // Call driverMain which calls the bigLibrary functions.
-    extern int driverMain();
-    driverMain();
-    exit(0);
-
     int numcpus = numa_num_task_cpus();
     std::cout << "numa_available() " << numa_available() << std::endl;
     numa_set_localalloc();
