@@ -4,7 +4,7 @@ CC = g++ -std=c++0x
 LIBS = -lpthread -lboost_thread -lnuma
 BIGLIB = ./lib/bigLib.so
 
-BIGLIBDEPS = $(BUILD_DIR)/numatest.o $(BUILD_DIR)/driver.o
+BIGLIBDEPS = $(BUILD_DIR)/main.o $(BUILD_DIR)/driver.o
 
 all: bigLibBinary
 

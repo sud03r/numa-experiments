@@ -56,10 +56,7 @@ void thread2(void* x, size_t core, size_t N, size_t M)
     pin_to_core(core);
 
     ptime t1 = microsec_clock::universal_time();
-    // Call driverMain which calls the bigLibrary functions.
-    extern int driverMain();
-    driverMain();
-
+    
     char c;
     for (size_t i(0);i<M;++i)
         for(size_t j(0);j<N;++j)
