@@ -34,7 +34,9 @@ void threadFunc(int core)
     driverMain();
 
     ptime t2 = microsec_clock::universal_time();
-    cout << "Time Elapsed for thread on core " << core << ":" << (t2 - t1) << endl;
+    time_duration duration = (t2 - t1); 
+    
+    printf("Time Elapsed for thread on core %d : %ld\n", core, duration.total_microseconds());
 }
 
 int main(int argc, const char **argv)

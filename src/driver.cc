@@ -13,7 +13,7 @@ int driverMain()
     libInit(funcArr, NUM_FUNCS);
     
     // calling random functions from the library 1000 times
-    for (int i = 0; i < 10000000; i++)
+    for (int i = 0; i < 1000000; i++)
     {
         int funcIdx = rand() % NUM_FUNCS;
         Fptr f = funcArr[funcIdx];
@@ -23,7 +23,6 @@ int driverMain()
         int arg2 = rand() % 55;
         (*f)(arg1, arg2);
     }
-    printf("driver.cc done!\n");
     return 0;
 }
 
