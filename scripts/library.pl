@@ -6,7 +6,7 @@
 #   {
 #       arg1 += rand() % (31 + 3 * I);
 #       arg2 += rand() % (131 + 2 * I);
-#       arg1 += arg2 / arg1;
+#       arg1 += arg2 * arg1;
 #       return arg1 + arg2;
 #   }
 #
@@ -27,18 +27,21 @@ for (my $i = 0; $i < $ARGV[0]; $i++)
 {
     $num1 = 31 + $i * 3;
     $num2 = 131 + $i * 2;
-    print BIGLIB "int func$i(int arg1, int arg2)\n";
+    print BIGLIB "int func$i(int arg1, int arg2, char* memAddress, int memSize)\n";
     print BIGLIB "{\n";
     print BIGLIB "  arg1 += rand() % $num1;\n";
     print BIGLIB "  arg2 += rand() % $num2;\n";
     print BIGLIB "  arg1 += arg2 * arg1;\n";
-    print BIGLIB "  return ((arg1 + arg2) % 100000000);\n";
+    print BIGLIB "  int rVal = (arg1 + arg2) % 1000;\n";
+    print BIGLIB "  for(int i = 0; i < 100; i++)\n";
+    print BIGLIB "      *(memAddress + ((i * 1009 * (rand() % 1009)) % memSize)) += rVal;\n";
+    print BIGLIB "  return rVal;\n";
     print BIGLIB "}\n\n";
 }
 
 # create the libInit() function that will insert pointers to these $ARGV[0] functions
 # in an array.
-print BIGLIB "typedef int (*Fptr) (int, int); \n"; 
+print BIGLIB "typedef int (*Fptr) (int, int, char*, int); \n"; 
 print BIGLIB "void libInit(Fptr* funcTable, int maxIdx)\n";
 print BIGLIB "{\n";
 print BIGLIB "  assert(maxIdx <= $ARGV[0]);\n";

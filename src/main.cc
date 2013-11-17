@@ -6,7 +6,7 @@
 
 using namespace std;
 using namespace boost::posix_time;
-extern int driverMain();
+extern int driverMain(char*, int);
 
 void pin_to_core(int core)
 {
@@ -26,12 +26,10 @@ void threadFunc(int core)
     // Allocate 2 MB of fata on this node
     int memSize = 2 * 1000000; // 1 MB
     char* y = static_cast<char*> (numa_alloc_local(memSize));
-    // Do something with this data randomly
-    for(int i = 0; i < memSize; i++)
-       *(y + ((i * 1009) % memSize)) += 1;
 
-    // Call driverMain which calls the bigLibrary functions.
-    driverMain();
+    // Call driverMain which calls the bigLibrary functions and
+    // Does something with this data randomly
+    driverMain(y, memSize);
 
     ptime t2 = microsec_clock::universal_time();
     time_duration duration = (t2 - t1); 
