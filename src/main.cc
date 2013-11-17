@@ -23,6 +23,13 @@ void threadFunc(int core)
     pin_to_core(core);
     ptime t1 = microsec_clock::universal_time();
     
+    // Allocate 2 MB of fata on this node
+    int memSize = 2 * 1000000; // 1 MB
+    char* y = static_cast<char*> (numa_alloc_local(memSize));
+    // Do something with this data randomly
+    for(int i = 0; i < memSize; i++)
+       *(y + ((i * 1009) % memSize)) += 1;
+
     // Call driverMain which calls the bigLibrary functions.
     driverMain();
 
