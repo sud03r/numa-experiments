@@ -19,7 +19,7 @@ bigLibBinary: $(BIGLIBDEPS)
 
 run : runBigLib
 
-runBigLib :
+runBigLib : bigLibBinary
 	LD_LIBRARY_PATH=./lib/:$$LD_LIBRARY_PATH  ./bigLibBinary
 clean:
 	\rm -f binary binary.debug bin/* bigLibBinary
