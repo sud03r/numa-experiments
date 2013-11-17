@@ -4,8 +4,8 @@
 #   This will create functions of type:
 #   int funcI(int arg1, int arg2)
 #   {
-#       arg1 += rand() % (30 + 3 * I);
-#       arg2 += rand() % (100 + 2 * I);
+#       arg1 += rand() % (31 + 3 * I);
+#       arg2 += rand() % (131 + 2 * I);
 #       arg1 += arg2 / arg1;
 #       return arg1 + arg2;
 #   }
@@ -21,23 +21,34 @@ open (BIGLIB , ">bigLib.cc") or die "Couldn't open bigLib.cc for writing";
 
 print BIGLIB "#include <cstdio>\n";
 print BIGLIB "#include <cstdlib>\n";
+print BIGLIB "#include <cassert>\n";
 
 for (my $i = 0; $i < $ARGV[0]; $i++)
 {
-    $num1 = 30 + $i * 3;
-    $num2 = 100 + $i * 2;
+    $num1 = 31 + $i * 3;
+    $num2 = 131 + $i * 2;
     print BIGLIB "int func$i(int arg1, int arg2)\n";
     print BIGLIB "{\n";
-    print BIGLIB "arg1 += rand() % $num1;\n";
-    print BIGLIB "arg2 += rand() % $num2;\n";
-    print BIGLIB "arg1 += arg2 / arg1;\n";
-    print BIGLIB "return arg1 + arg2;\n";
+    print BIGLIB "  arg1 += rand() % $num1;\n";
+    print BIGLIB "  arg2 += rand() % $num2;\n";
+    print BIGLIB "  arg1 += arg2 / arg1;\n";
+    print BIGLIB "  return arg1 + arg2;\n";
     print BIGLIB "}\n\n";
-    if ($i % 10000 == 0)
-    {
-       print "Processed chunk of 10000 functions\n"; 
-    }
 }
+
+# create the libInit() function that will insert pointers to these $ARGV[0] functions
+# in an array.
+print BIGLIB "typedef int (*Fptr) (int, int); \n"; 
+print BIGLIB "void libInit(Fptr* funcTable, int maxIdx)\n";
+print BIGLIB "{\n";
+print BIGLIB "  assert(maxIdx <= $ARGV[0]);\n";
+for (my $i = 0; $i < $ARGV[0]; $i++)
+{
+    print BIGLIB "  funcTable[$i] = func$i;\n";
+}
+print BIGLIB "  printf(\"Finished setting up library pointers\\n\");\n";
+print BIGLIB "}\n\n";
+
 close(BIGLIB);
 print "Compiling the generated library\n";
 
