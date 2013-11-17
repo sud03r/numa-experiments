@@ -41,13 +41,22 @@ int main(int argc, const char **argv)
     int numCores = numa_num_task_cpus();
     int numSockets = numa_max_node() + 1;
     cout << "NUMA machine with " << numCores << " cores and " << numSockets << " Socket(s)" << endl;
+
+    vector<boost::thread*> tPtrs;
     for (int coreIdx = 0; coreIdx < numSockets ; coreIdx++)
     {
         // 4 sockets, each with 6 cores with core 
         // Ids as : 4*i, 4*i + 1, 4*i + 2, 4*i + 3 where i = 0..5
         // This implies, core 0, 1, 2, 3 will lie on different sockets
-        boost::thread t(boost::bind(&threadFunc, coreIdx));
-        t.join();
+        tPtrs.push_back(new boost::thread(threadFunc, coreIdx));
+    }
+
+    for (int i = 0; i < tPtrs.size(); i++)
+    {
+        boost::thread* t = tPtrs.at(i);
+        assert(t);
+        t->join();
+        delete t;
     }
     return 0;
 }
