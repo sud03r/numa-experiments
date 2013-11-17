@@ -9,13 +9,10 @@ BIGLIBDEPS = $(BUILD_DIR)/main.o $(BUILD_DIR)/driver.o
 all: bigLibBinary
 
 bin/%.o : src/%.cc
-	$(CC) -c -o $@ $<
+	$(CC) -c -g -o $@ $<
 
 binary: $(BUILD_DIR)/numatest.o
 	$(CC) $< $(LIBS) -o $@
-
-binary.debug: $(OBJ)
-	$(CC) -g $< $(LIBS) -o $@
 
 bigLibBinary: $(BIGLIBDEPS)
 	$(CC) $(BIGLIBDEPS) $(BIGLIB) $(LIBS) -o $@

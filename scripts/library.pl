@@ -31,8 +31,8 @@ for (my $i = 0; $i < $ARGV[0]; $i++)
     print BIGLIB "{\n";
     print BIGLIB "  arg1 += rand() % $num1;\n";
     print BIGLIB "  arg2 += rand() % $num2;\n";
-    print BIGLIB "  arg1 += arg2 / arg1;\n";
-    print BIGLIB "  return arg1 + arg2;\n";
+    print BIGLIB "  arg1 += arg2 * arg1;\n";
+    print BIGLIB "  return ((arg1 + arg2) % 100000000);\n";
     print BIGLIB "}\n\n";
 }
 

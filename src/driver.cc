@@ -13,7 +13,7 @@ int driverMain()
     libInit(funcArr, NUM_FUNCS);
     
     // calling random functions from the library 1000 times
-    for (int i = 0; i < 1000; i++)
+    for (int i = 0; i < 1000000; i++)
     {
         int funcIdx = rand() % NUM_FUNCS;
         Fptr f = funcArr[funcIdx];
