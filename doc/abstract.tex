@@ -1,0 +1,7 @@
+There has been work done about the performance of processes with respect to data locality and cache contention in NUMA environment.
+Tradeoff between local and remote data fetches for improved cache hit, can provide a suitable thread scheduling schemes.
+Although the effect of instructions on process' performance has not been explored yet.
+In this paper we would present an analysis about the performance hit on processes due to instructions.
+Instructions used in the process can become a key factor for the performance, when they are shared among number of threads running on different sockets in NUMA machines.
+These shared instructions are usually loaded as shared objects, in the memory and a single copy is being maintained throughout the lifetime of the process.
+We would present that how a single copy of these shared objects can harm the performance due to remote fetches in NUMA machines.

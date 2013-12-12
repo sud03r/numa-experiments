@@ -1,0 +1,17 @@
+With the introduction of NUMA architecture, few problems with respect to data locality became bottleneck for a process' performance.
+There is always a tradeoff between cache contention and interconnect overhead while scheduling threads on NUMA machines \cite{Majo:2011:MMN:1993478.1993481}
+Running two threads of a process on a same socket avoids interconnect overhead but experiences a penalty in terms of cache contention, as last level cache will be shared between two threads running on the same socket.
+Whereas sheduling two threads on different sockets can avoid cache contention as two threads will use their local LLCs but the penalty of data fetch over interconnect hits the performance in this case.
+Majo et. al. \cite{Majo:2011:MMN:1993478.1993481} have introduced N-MASS algorithm, which is a cache conscious scheduler for NUMAs.
+
+Problem discussed above talks about the data section associated with each process.
+NUMA architecture introduces a similar problem in case of code section of each process as well.
+Code section consists of instructions, and this section is read-only, unlike the data section.
+Hence, there is always a single copy of this section in the memory which is shared between all the threads spawned by the process.
+Code section can be considered small enough to be cached in the L1-icache of each CPU, which is true, and might not harm the performance as badly as in case of data.
+But this code section can increase drastically once the thread starts using shared libraries included in the code.
+Size of these shared libraries can easily exceed the size of L1-icache (L1-icache in a AMD opteron machine is 64KB and size of libc is xxx).
+Therefore, the instructions are always fetched from memory at times of L1-icache misses.
+Fetching these instructions over the interconnect harms the execution time of threads on remote sockets.
+
+
