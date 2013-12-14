@@ -1,1 +1,11 @@
-Hello Evaluation.
+\subsection{Remote vs Local Library}
+In the above section we saw the interconnect overhead in terms of slowdown, when we try to fetch data from remote node.
+Similar overhead exist in the case when read-only data is being fetched from remote node.
+Here our read-only data is the shared library's instructions.
+The shared library was placed on Node03 and then we ran the main thread on each of the four nodes.
+Main thread called 0.1 million functions from the library in sequential order.
+Figure XX shows the result.
+We measured the total number of CPU cycles consumed, stalled cycles and page faults in each case.
+We observed that in the case when our main thread was running locally (i.e. on Node03) minimum number of CPU cycles were consumed, and stalled cycles were also minimum.
+We measured page faults to make sure that we are fetching equal number of library pages in all four cases, and number of page faults were equal in all four cases.
+
