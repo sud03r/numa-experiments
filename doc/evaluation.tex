@@ -21,7 +21,7 @@ We observed that in the case when our main thread was running locally (i.e. on n
 Number of stalled cycles were also minimum when library is placed locally, high number of stalled cycles in remote case indicates that lot of CPU cycles were idle due slow for data fetch over the interconnect.
 We measured page faults to make sure that we are fetching equal number of library pages in all four cases, and number of page faults were equal in all four cases.
 The number of cycles consumed were proportional to the interconnect slowdown we saw in above section.
-From the slowdown Matrix in figure xxx we see that N0 is farthest to N3, hence maximum cycles are consumed by node N0 and least for the local node.
+From the slowdown Matrix in figure \ref{fig:numaMatrix} we see that N0 is farthest to N3, hence maximum cycles are consumed by node N0 and least for the local node.
 
 
 
