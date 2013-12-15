@@ -13,7 +13,7 @@ modern NUMA hardware has much smaller remote wire delays, and so remote access c
 concern for performance, instead, congestion on memory controllers and interconnects, caused by memory traffic 
 from data-intensive applications, hurts performance a lot more.
 
-Another work by Majo et. al. \cite{Majo:2011:MMN:1993478.1993481} tends to exploit the tradeoff between cache contention
+Another work by Majo et. al. \cite{Majo:2011:MMN:1993478.1993481} tends to exploit the trade-off between cache contention
 and interconnect overhead while scheduling threads on NUMA machines. Running two threads of a process on the same socket
 avoids interconnect overhead but experiences a penalty in terms of cache contention, as last level cache are shared for
 threads running on the same socket, Whereas scheduling two threads on different sockets can avoid cache contention
@@ -41,6 +41,6 @@ node from both these perspectives and discuss the results. We also discuss some 
 The remainder of the paper is organized as follows. In the next section, we discuss a little bit about shared libraries and 
 then talk about our experimental setup. In section 3, we will discuss at length the motivation, results and also the explanation
 of the results for each of the experiments performed. In section 4, we will discuss about some ideas that could potentially improve
-the system performance with shared libraries on NUMA machines and talk about the roadmap to their implementation in future works.
+the system performance with shared libraries on NUMA machines and talk about the road map to their implementation in future works.
 Finally we conclude, highlighting the key observations from our experiments.
 
