@@ -1,7 +1,12 @@
-There has been work done about the performance of processes with respect to data locality and cache contention in NUMA environment.
-Tradeoff between local and remote data fetches for improved cache hit, can provide a suitable thread scheduling schemes.
-Although the effect of instructions on process' performance has not been explored yet.
-In this paper we would present an analysis about the performance hit on processes due to instructions.
-Instructions used in the process can become a key factor for the performance, when they are shared among number of threads running on different sockets in NUMA machines.
-These shared instructions are usually loaded as shared objects, in the memory and a single copy is being maintained throughout the lifetime of the process.
-We would present that how a single copy of these shared objects can harm the performance due to remote fetches in NUMA machines.
+
+Most modern multicore systems these days are NUMA, which means they have multiple memory comtrollers
+with non-uniform access latencies across them. There has been significant amount of work done in exploring and 
+mitigating performance penalty due to NUMA overhead. In previous works, NUMA-aware schedulers were proposed,
+sometimes with an objective of keeping data close to the processors working on them and sometimes to attain a 
+tradeoff between data locality and cache contention. \\
+However, the effect of instructions on process' performance in context of NUMA has not been explored yet.
+In this work, we present an analysis about the performance hit on processes due to instructions on NUMA machines.
+We limit our focus to the impact of shared code, which by definition has a single copy and resides on one of the NUMA nodes.
+We also discuss various scenarios in which a single copy of these shared objects can harm the performance due to remote
+fetches and present some ideas to alleviate the problem.
+

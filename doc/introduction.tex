@@ -1,30 +1,46 @@
-With the introduction of NUMA architecture, few problems with respect to data locality became bottleneck for a process's performance.
-There is always a tradeoff between cache contention and interconnect overhead while scheduling threads on NUMA machines \cite{Majo:2011:MMN:1993478.1993481}
-Running two threads of a process on a same socket avoids interconnect overhead but experiences a penalty in terms of cache contention, as last level cache will be shared between two threads running on the same socket.
-Whereas scheduling two threads on different sockets can avoid cache contention as two threads will use their local LLCs but the penalty of data fetch over interconnect hits the performance in this case.
+
+With the constantly increasing number of cores in modern multicore systems, Non-uniform memory architectures
+are becoming more and more common. In its simplest form, a NUMA can have two processors with local memories connected
+to each other via an interconnect. Naturally, access to local memory is faster than the remote by a factor greater than 1,
+called the numa factor or numa overhead. With more processors, the interconnections become more complex, and the numa factor
+can also be different for different pair of nodes.
+
+With the introduction of NUMA architectures, problems with respect to data locality becoming bottleneck for application performance
+has drawn significant academic attention. Previous work by Brecht\cite{Brecht:1993:IPA:1295480.1295481} and 
+Broquedis et al.\cite{numaScheduling} explore placement decisions in context of data locality.
+In another recent work \cite{Dashti:2013:TMH:2490301.2451157}, the authors claim that contrary to older systems,
+modern NUMA hardware has much smaller remote wire delays, and so remote access costs per se are not the main 
+concern for performance, instead, congestion on memory controllers and interconnects, caused by memory traffic 
+from data-intensive applications, hurts performance a lot more.
+
+Another work by Majo et. al. \cite{Majo:2011:MMN:1993478.1993481} tends to exploit the tradeoff between cache contention
+and interconnect overhead while scheduling threads on NUMA machines. Running two threads of a process on the same socket
+avoids interconnect overhead but experiences a penalty in terms of cache contention, as last level cache are shared for
+threads running on the same socket, Whereas scheduling two threads on different sockets can avoid cache contention
+as two threads will use their local LLCs but the penalty of data fetch over interconnect can hit the performance in this case.
 Majo et. al. \cite{Majo:2011:MMN:1993478.1993481} have introduced N-MASS algorithm, which is a cache conscious scheduler for NUMAs.
 
+The problems addressed in previous works mainly deal with the data-section associated with the program. We believe that
+a similar problem exists for text-section of the program in context of NUMA environment, albeit less aggravated
+because of the text-section being read-only. In this work, we present a detailed analysis for this problem in context of
+shared libraries, which by definition has a single copy across all memory nodes, and is loaded into memory when an object
+linked against it starts execution.
 
-Problem discussed above talks about the data section associated with each process.
-NUMA architecture introduces a similar problem in case of code section of each process as well.
-Code section consists of instructions, and this section is read-only, unlike the data section.
-Hence, there is always a single copy of this section in the memory which is shared between all the threads spawned by the process.
-Code section can be considered small enough to be cached in the L1-icache of each CPU, which is true, and might not harm the performance as badly as in case of data.
-But the code section can increase drastically once the thread starts using shared libraries included in the code.
-Shared libraries are loaded at the runtime when the first thread linked against it is executed.
-Once the shared library is loaded, its position does not change in the memory and only single copy exist in memory.
-Size of these shared libraries can easily exceed the size of L1-icache (L1-icache in a AMD opteron machine is 64KB and size of libc is xxx).
-Therefore, the instructions are always fetched from memory at every L1-icache miss.
-Fetching these instructions over the interconnect harms the execution time of threads on remote sockets.
-We observed that the threads running on the socket local to the shared library location takes least number of cycles to finish the process.
-Whereas the socket farthest to it takes the maximum time.
-In our four socket AMD Opteron machine, two sockets are directly connected to the local socket and the diagonaly opposite socket is accessible via single hop.
-The number of cycles taken by the threads running on each of the sockets were proportional to the distance with the local socket.
-The other factor which affects the thread performance on NUMA is the interconnect congestion.
-As there is only single copy of shared library in memory, with the increasing number of threads the traffic across interconnect increases.
-All remote threads experience a race condition for interconnect usage.
-Due to which the number of stalled cycles increases drastically with increasing number of threads.
+Text-section of a program mostly consists of instructions and read-only global data. In case of shared libraries, this section
+is unique across all memory nodes and will be shared by all the running processes linked against that library. As the text
+section is read-only and would be rarely evicted, it makes sense to have an extra cache for instructions. This is accomplished
+by having instruction only caches at L1 level, called L1-icache. Normally, as code size is dependent upon the program complexity,
+which is fixed, this means that the growth is not as bad as in case of data. Additionally, program flow being more predictable
+than data access patterns, it is normally the case that active code can somewhat fit in the cpu caches.
+However, it is still not uncommon to find applications using big shared libraries. In cases when the size of shared library exceeds
+the cache-sizes or for some reason prefetching fails, the instructions will need to be fetched from the main memory.
+This can result in two problems, increased latencies due to instructions being fetched from remote node and increased overhead on
+memory controllers and interconnects due to congestion. In this work, we examine and analyze the cost of code on a remote NUMA
+node from both these perspectives and discuss the results. We also discuss some ideas that can be applied to mitigate the problem.
 
-
-In this paper we are presenting the analysis about performance hit seen by processes due to code section, on NUMA machines.
+The remainder of the paper is organized as follows. In the next section, we discuss a little bit about shared libraries and 
+then talk about our experimental setup. In section 3, we will discuss at length the motivation, results and also the explanation
+of the results for each of the experiments performed. In section 4, we will discuss about some ideas that could potentially improve
+the system performance with shared libraries on NUMA machines and talk about the roadmap to their implementation in future works.
+Finally we conclude, highlighting the key observations from our experiments.
 
