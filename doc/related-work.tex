@@ -1,1 +1,6 @@
-Hello World.
+The work done by Brecht \cite{Brecht:1993:IPA:1295480.1295481} explains that in the case of NUMA scheduler the question of which processor becomes more important than how many processors to be assigned for a task.
+His results have shown thread placement decision is critical in large scale multiprocessors.
+Work done by Broquedis et al \cite{numaScheduling} is also on the similar lines and talks about dynamic task and data placement over NUMA architecture.
+In another recent work \cite{Dashti:2013:TMH:2490301.2451157}, the authors claim that contrary to older systems, modern NUMA hardware has much smaller remote wire delays, and so remote access costs should not be the main concern for performance, instead, congestion on memory controllers and interconnects, caused by memory traffic from data-intensive applications, hurts performance a lot more.
+Majo et. al. \cite{Majo:2011:MMN:1993478.1993481} have exploited the trade-off between cache contention and interconnect overhead for their NUMA aware scheduler.
+

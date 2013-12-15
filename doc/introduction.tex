@@ -30,7 +30,7 @@ Text-section of a program mostly consists of instructions and read-only global d
 is unique across all memory nodes and will be shared by all the running processes linked against that library. As the text
 section is read-only and would be rarely evicted, it makes sense to have an extra cache for instructions. This is accomplished
 by having instruction only caches at L1 level, called L1-icache. Normally, as code size is dependent upon the program complexity,
-which is fixed, this means that the growth is not as bad as in case of data. Additionally, program flow being more predictable
+which is fixed, this means that the growth is not as bad as in the case of data. Additionally, program flow being more predictable
 than data access patterns, it is normally the case that active code can somewhat fit in the cpu caches.
 However, it is still not uncommon to find applications using big shared libraries. In cases when the size of shared library exceeds
 the cache-sizes or for some reason prefetching fails, the instructions will need to be fetched from the main memory.
@@ -39,8 +39,8 @@ memory controllers and interconnects due to congestion. In this work, we examine
 node from both these perspectives and discuss the results. We also discuss some ideas that can be applied to mitigate the problem.
 
 The remainder of the paper is organized as follows. In the next section, we discuss a little bit about shared libraries and 
-then talk about our experimental setup. In section 3, we will discuss at length the motivation, results and also the explanation
-of the results for each of the experiments performed. In section 4, we will discuss about some ideas that could potentially improve
+then talk about our experimental setup. In section \ref{sec:analysis}, we will discuss at length the motivation, results and also the explanation
+of the results for each of the experiments performed. In section \ref{future-work}, we will discuss about some ideas that could potentially improve
 the system performance with shared libraries on NUMA machines and talk about the road map to their implementation in future works.
 Finally we conclude, highlighting the key observations from our experiments.
 
