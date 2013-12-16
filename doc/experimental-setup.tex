@@ -6,7 +6,22 @@ Cache related and topology related information about the NUMA hardware can be fo
 \\
 \texttt{ /sys/devices/system/cpu/cpu*/topology }
 
-The L1, L2 and L3 sizes for the machine were 128, 512 and 6144 KBytes respectively.
+The L1, L2 and L3 sizes for the machine were 128, 512 and 6144 KBytes respectively. The following table shows where the
+core to socket mapping:
+
+\begin{center}
+\begin{tabular}{c|c}
+\hline
+Socket Id & Core Ids\\
+\hline
+0 & 0, 4, ..4*i.. 8\\ 
+1 & 1, 5, ..4*i+1.. 9 \\
+2 & 2, 6, ..4*i+2.. 10\\
+3 & 3, 7, ..4*i+3.. 11\\
+\hline
+\end{tabular}
+\end{center}
+
 
 \subsection{Performance monitoring}
 For our measurements, we relied on \texttt{RDTSC} assembly instruction\cite{timeStampCounter} for getting CPU timing information
@@ -23,6 +38,8 @@ data for local and remote memory access.
 
 To make our measurements more accurate, we undermine the effect of cpu caches by flushing the cache line associated with the 
 variable before every memory access. We do this by using the CLFLUSH\cite{clflush} assembly instruction as follows.
+
+
 \begin{verbatim}
 // ...
 const char* roData = "foo";
