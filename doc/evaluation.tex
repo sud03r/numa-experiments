@@ -104,7 +104,7 @@ can perform better in this case and consequently the performance impact can be l
 
 In all of the above experiments, the shared library we used had about 60 MB of text-section.
 As discussed earlier, most of the modern libraries are lesser than 20 MBs, and very few are of
-order of 40 MBs. In this section we will vary the text-section size for the libraries and see plot
+order of 40 MBs. In this section we will vary the text-section size for the libraries and see 
 the impact on system performance.
 
 As the size of text-section is directly proportional to the number of functions, we vary the size by simply 
@@ -122,7 +122,7 @@ N_{cyclesPerCall} =  N_{totalElapsedCycles} / numFunctionCalls
 This metric is necessary to compare performance across libraries of two different sizes, as with increased sizes, the number
 of page-faults to load the library into memory will also increase.
 
-The main thread calls the library functions in sequential order, each function being only called once.
+The main thread calls the library functions in sequential order, each function being called only once.
 Setup was very much similar to above experiments, we had our library on one node and main thread was made to run on 
 each of the four nodes. For our comparison, we selected the local node (housing the shared library) and farthest node
 from this local node, and computed the ratio of their $N_{cyclesPerCall}$ metric as follows:
@@ -131,7 +131,7 @@ from this local node, and computed the ratio of their $N_{cyclesPerCall}$ metric
 R_{slowdown} =  N\_Far_{cyclesPerCall} / N\_Local_{cyclesPerCall}
 \end{dmath}
 
-We then plot the values of $R_{slowdown}$ for different values of library text-section sizes,
+We then plot the values of $R_{slowdown}$ in percentage for different values of library text-section sizes.
 The result is shown in Figure \ref{fig:slowdownWithSize.png}.
 As expected, we found that when the library is small enough to fit in the cache, not much slowdown is observed.
 It has even gone to negative in some cases. But as the size of library increases and the cache misses increase,
@@ -153,7 +153,7 @@ hot-spots to prevent congestion on interconnect and memory controllers.
 
 In case of data, an application may exploit data-level parallelism by splitting the data, such that
 each thread mostly works on a distinct data-set. In such a scenario, threads are lightly coupled and
-is ideal for parallelism. It also doesn't makes much sense for multiple threads to operate on 
+is ideal for parallelism. It also doesn't make much sense for multiple threads to operate on 
 same data set in parallel, and therefore it is less likely that traffic hot-spots exist in such a system,
 and even if they do exist, can be avoided by careful allocation of data.\\
 Such a situation, is however more likely to happen in case of shared libraries, as they can only have
@@ -168,7 +168,7 @@ of text-section. The shared library was placed on Node 0. The driver function th
 the library can now be executed concurrently by multiple threads.
 We don't modify any shared-data, therefore we didn't need any kind of locking or synchronization mechanisms.
 
-Figure \ref{fig:timevsthread.png} shows the plot of time taken for n-threads to execute 40k function calls from
+Figure \ref{fig:timevsthread.png} shows the plot of time taken for n-threads to execute 40k and 80k function calls from
 the library for different values of n. It can be seen that the curve is nearly flat in the beginning, but picks up
 later with increase in congestion at the interconnect and/or memory controller.
 
