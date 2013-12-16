@@ -1,5 +1,5 @@
 
-All our experiments were performed on a NUMA machine with 4-sockets each housing a six-core AMD Opteron 8431 processor.\cite{opteron}
+All our experiments were performed on a NUMA machine with 4-sockets each housing a six-core AMD Opteron 8431 processor \cite{opteron}.
 Cache related and topology related information about the NUMA hardware can be found at:
 
 \texttt{/sys/devices/system/cpu/cpu*/cache } \\
@@ -44,7 +44,7 @@ Whereas, if the cache is not flushed, the data is too small and can easily fit i
 T_{NoCFlush} \approx T_{decodeAndExecute}
 \end{dmath}
 
-From \ref{eqn:NoCacheFetch} and \ref{eqn:cacheFetch}, we can compute the value for $T_{memoryFetch}$, the
+From \ref{eqn:NoCacheFetch} and \ref{eqn:cacheFetch}, we can compute the value for $T_{MemFetch}$, the
 results for which are labeled in the following table (all entries in clock ticks):
 
 \begin{center}
