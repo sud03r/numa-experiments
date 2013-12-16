@@ -1,4 +1,18 @@
-\subsection{Remote vs Local Library} \label{sec:remoteVsLocal}
+
+The experiments performed by us can be broadly divided into two categories, evaluating performance
+impact due to numa overhead and that due to congestion over interconnect and memory controllers.
+We discuss each of these seperately in following sections.
+\subsection{Impact of NUMA overhead}
+
+\subsubsection{Remote vs Local Library} \label{sec:remoteVsLocal}
+In previous section, we computed the interconnect overhead and claimed that similar overhead should 
+exist in case when shared code is being fetched from remote node.
+To verify our claim, we loaded our generated shared library with 0.1 million functions.
+The scheduler placed the shared library on node N3.
+Then we created a thread which called functions from this library in sequential order with offset equal to cache size, 
+which means we called functions in a way that every next function called could be a cache miss.
+We ran this thread multiple times on each of the four nodes $N0, N1, N2$ and $N3$.
+The aggregated results are shown in figure \ref{fig:remoteVsLocal}.
 
 \begin{figure}
     \centering
@@ -7,27 +21,21 @@
     \label{fig:remoteVsLocal}
 \end{figure}
 
-
-In the above section we saw the interconnect overhead in terms of slowdown in time when data is fetched from remote node.
-Similar overhead exist in the case when read-only data is being fetched from remote node \cite{Drepper07whatevery}.
-We tried to see that slowdown in the case of shared libraries, which are also the read-only data.
-The shared library was placed on node N3.
-Then we wrote a main thread which called functions from this shared library.
-We ran the main thread on each of the four nodes (N0,N1,N2,N3).
-Main thread called 0.1 million functions from the library in sequential order with offset equal to cache size.
-Which means we called functions in a way that every next function called must be a cache miss.
-Figure \ref{fig:remoteVsLocal} shows the result.
 We measured the total number of CPU cycles consumed, stalled cycles and page faults in each case.
 We observed that in the case when our main thread was running locally (i.e. on node N3), it consumed minimum number of CPU cycles.
-Number of stalled cycles were also minimum when library is placed locally, high number of stalled cycles in remote case indicates that lot of CPU cycles were idle due slow for data fetch over the interconnect.
-We measured page faults to make sure that we are fetching equal number of library pages in all four cases, and number of page faults were equal in all four cases.
-The number of cycles consumed were proportional to the interconnect slowdown we saw in above section.
-From the slowdown Matrix in figure \ref{fig:numaMatrix} we see that N0 is farthest to N3, hence maximum cycles are consumed by node N0 and least for the local node.
+Number of stalled cycles were also minimum when library is placed locally, high number of stalled cycles in remote case indicates
+that lot of CPU cycles were idle due slow for data fetch over the interconnect.
+We measured page faults to make sure that we are fetching equal number of library pages in all four cases, 
+and number of page faults were equal in all four cases.
 
+It can be verified that N0 and N3 being on the opposite corners of diagonal, have the maximum interconnect delays.
+The results exhibit a similar pattern, as in, maximum cycles are consumed by node N0 and the least cycles for the local node N3.
 
+\subsubsection{Small vs Big functions in Library}
 
-\subsection{Small vs Big functions in Library}
-
+In our previous experiment, size of each function was found to be approximately 600 bytes. We believed that with smaller size
+functions, there will be less spatial locality and we could see an increased impact on the performance. In this case, the number
+of functions increased
 \begin{figure}
     \centering
     \includegraphics[scale=0.38]{smallFunc.png}
@@ -35,7 +43,6 @@ From the slowdown Matrix in figure \ref{fig:numaMatrix} we see that N0 is farthe
     \label{fig:smallFunc}
 \end{figure}
 
-The size of each function in above section is about 600 Bytes.
 We tried to make smallest possible functions which look like this:
 
 \texttt{ int f_i()\{return i;\} }
@@ -49,7 +56,7 @@ Number of CPU cycles consumed by remote nodes were more than those consumed by t
 
 
 
-\subsection{Various probability distributions of function calls}
+\subsubsection{Various probability distributions of function calls}
 
 \begin{figure}
     \centering
@@ -80,7 +87,7 @@ Therefore instruction caching will favor the performance in this case.
 Due to which the difference in the CPU cycles consumed by N3 (local) and N0,N1,N2 (remote) is not great.
 
 
-\subsection{Varied Library Sizes}
+\subsubsection{Varied Library Sizes}
 
 \begin{figure}
     \centering

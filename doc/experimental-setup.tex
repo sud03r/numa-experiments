@@ -64,3 +64,13 @@ From the table above, it can be concluded that adjacent access is 1.5x costly wh
 2x costlier. These observed results agree with the fact that for 4-node NUMA machines, the topology is
 hypercube with \textit{C} = 2, as discussed here\cite{Drepper07whatevery}.
 
+\subsection{Library Setup}
+We needed to call all the functions in shared library multiple times in different orders. This was difficult
+to implement with existing libraries as most functions have different signatures, and therefore, generating
+arguments and calling all of them can be a tedious task. To avoid this, we allowed ourselves the flexibility
+to generate shared libraries of appropriate sizes using a perl-based code generator or alternatively using
+C++ Template Metaprogramming.\cite{templateMeta}
+
+We generated multiple shared libraries, and carried our experiments on them the results of which are presented
+in the next section. All the functions in the library were indexed in a \textit{functionTable}, from where they
+could be called in various different ways.
