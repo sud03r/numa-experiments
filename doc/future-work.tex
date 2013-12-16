@@ -24,7 +24,7 @@ additional copies of the text-section, so that no access for instruction needs t
 The solution sounds great as it completely eliminates the NUMA overhead but it should be noted that it has
 its own costs. It introduces a new problem of keeping all replicated copies in sync, which is a less severe
 problem for shared code as it is read-only. The kernel will however, still need to sync every node if any 
-of them undergo a page-fault. The advantage being the system can be implemented transparently in the
+of them undergo a page-fault. The advantage being, the system can be implemented transparently in the
 kernel and the programmer doesn't has to know about it.
 
 \textbf{Distributed Loading} Another possible solution is loading parts of shared library across all the
