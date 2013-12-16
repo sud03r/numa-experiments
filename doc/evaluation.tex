@@ -1,7 +1,7 @@
 
 The experiments performed by us can be broadly divided into two categories, evaluating performance
-impact due to numa overhead and that due to congestion over interconnect and memory controllers.
-We discuss each of these seperately in following sections.
+impact due to NUMA overhead and that due to congestion over interconnect and memory controllers.
+We discuss each of these separately in following sections.
 \subsection{Impact of NUMA overhead}
 
 \subsubsection{Remote vs Local Library} \label{sec:remoteVsLocal}
@@ -119,12 +119,12 @@ To measure this impact we introduce the following metric:
 N_{cyclesPerCall} =  N_{totalElapsedCycles} / numFunctionCalls
 \end{dmath}
 
-This metric is necesarry to compare performance across libraries of two different sizes, as with increased sizes, the number
+This metric is necessary to compare performance across libraries of two different sizes, as with increased sizes, the number
 of page-faults to load the library into memory will also increase.
 
 The main thread calls the library functions in sequential order, each function being only called once.
 Setup was very much similar to above experiments, we had our library on one node and main thread was made to run on 
-each of the four nodes. For our comparision, we selected the local node (housing the shared library) and farthest node
+each of the four nodes. For our comparison, we selected the local node (housing the shared library) and farthest node
 from this local node, and computed the ratio of their $N_{cyclesPerCall}$ metric as follows:
 \begin{dmath}
 \label{eqn:slowdown}
@@ -149,15 +149,15 @@ with 21MB of text section, but later stabilizes around this value.
 Dashti et al. \cite{Dashti:2013:TMH:2490301.2451157} claim that in modern NUMA systems, wire-delays
 are not the only source of performance hits, but congestion on interconnect links and in memory 
 controllers can also dramatically hurt performance. They propose an algorithm which avoids, traffic
-hotspots to prevent congestion on interconnect and memory controllers.
+hot-spots to prevent congestion on interconnect and memory controllers.
 
 In case of data, an application may exploit data-level parallelism by splitting the data, such that
 each thread mostly works on a distinct data-set. In such a scenario, threads are lightly coupled and
 is ideal for parallelism. It also doesn't makes much sense for multiple threads to operate on 
-same data set in parallel, and therefore it is less likely that traffic hotspots exist in such a system,
+same data set in parallel, and therefore it is less likely that traffic hot-spots exist in such a system,
 and even if they do exist, can be avoided by careful allocation of data.\\
 Such a situation, is however more likely to happen in case of shared libraries, as they can only have
-a single copy across the system, making the NUMA node housing the library, a potential traffic hotspot.
+a single copy across the system, making the NUMA node housing the library, a potential traffic hot-spot.
 
 In the previous sections, all our experiments were conducted independently, that is, the shared library
 was being accessed only by a single thread. In real application scenarios, multiple threads and processes

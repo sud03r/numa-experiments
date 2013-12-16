@@ -27,10 +27,10 @@ problem for shared code as it is read-only. The kernel will however, still need 
 of them undergo a page-fault. The advantage being the system can be implemented transparently in the
 kernel and the programmer doesn't has to know about it.
 
-\textbf{Distributed Loading} Another possible solution is loading parts of shared library accross all the
-NUMA nodes. Such a solution will prevent shared library from becoming a traffic hotspot and also amortize
+\textbf{Distributed Loading} Another possible solution is loading parts of shared library across all the
+NUMA nodes. Such a solution will prevent shared library from becoming a traffic hot-spot and also amortize
 the cost of remote NUMA access. The system however will be more complicated as the kernel will need to
-keep track of pages on both remote and local nodes and seems wrothwhile only if the benefits outnumber the
+keep track of pages on both remote and local nodes and seems worthwhile only if the benefits outnumber the
 complexities.
 
 In our future works, we aim to further explore these ideas and implement some of these and present the

@@ -12,7 +12,7 @@ The L1, L2 and L3 sizes for the machine were 128, 512 and 6144 KBytes respective
 For our measurements, we relied on \texttt{RDTSC} assembly instruction\cite{timeStampCounter} for getting CPU timing information
 and \texttt{perf stat} \cite{perfWiki}, for counting the cache misses, page-faults and stalled CPU cycles. We used libnuma,
 the NUMA policy library, for control and placement of threads and data on the NUMA nodes. \cite{libNuma} lists many functions
-that can be used to modify the default numa policy as required. The command line interface, \texttt{numactl} \cite{numactl} 
+that can be used to modify the default NUMA policy as required. The command line interface, \texttt{numactl} \cite{numactl} 
 provides various command-line arguments like \texttt{cpubind} and \texttt{membind} to bind processes and data to specific nodes.
 
 \subsection{Interconnect Overhead}
@@ -45,12 +45,12 @@ T_{NoCFlush} \approx T_{decodeAndExecute}
 \end{dmath}
 
 From \ref{eqn:NoCacheFetch} and \ref{eqn:cacheFetch}, we can compute the value for $T_{MemFetch}$, the
-results for which are labeled in the following table (all entries in clock ticks):
+results for which are labelled in the following table (all entries in clock ticks):
 
 \begin{figure}
     \centering
     \includegraphics[scale=0.38]{hypercube.png}
-    \caption{4-node NUMA topology, N1, N2 and N3 are respectively horizontal, vertical and diagonal neighbors of N0}
+    \caption{4-node NUMA topology, N1, N2 and N3 are respectively horizontal, vertical and diagonal neighbours of N0}
     \label{fig:remoteVsLocal}
 \end{figure}
 
