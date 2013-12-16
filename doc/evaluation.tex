@@ -173,6 +173,27 @@ the library for different values of n. It can be seen that the curve is nearly f
 later with increase in congestion at the interconnect and/or memory controller.
 
 We also tried various combinations, the results of which are presented below:
-\textbf{}
 \begin{verbatim}
+(Library residing on node 0)
+Number of running threads : 1
+Core 0 : 375.04 ms
+Core 3 : 386.42 ms
+
+Number of running threads : 2
+Core 0 and  4 : 387.20 (Local memory + shared cache)
+Core 1 and  2 : 402.50 (Remote memory + No shared cache)
+Core 3 and  7 : 405.48 (Remote memory + shared cache)
+
+Number of running threads : 3
+Core 0, 4 and 8 : 392.31 (All three local + shared cache)
+Core 1, 2 and 3 : 411.31 (All remote + No shared cache)
 \end{verbatim}
+
+Based upon these values, it can be inferred that there is a performance overhead, whenever a new thread is
+added to the system. Sometimes, this overhead gets reduced when the cores have a shared cache. This is so because
+the  threads are accessing the same data, hence the caches will collabrate and not contend. The extra performance
+overhead with introduction of new threads can be attributed to congestion on both memory controller and the interconnect.
+We believe that the interconnect congestion is less evident with smaller number of threads but becomes more pronounced
+when the number of threads increase, which explains the initial flat curve in the graph. At later stages, as each node
+can have multiple cores fetching the shared-code from the memory, their caches may be co-operate, resulting in the an
+asymptotic curve towards the end.
