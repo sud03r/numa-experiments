@@ -111,3 +111,22 @@ We observed that when the library is small enough to fit in the cache, not much 
 It has even gone to negative in some cases.
 But as the size of library increases and instructions are fetched over interconnect, we see that the slowdown has increased.
 It is 14\% for 21MB library.
+
+
+
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.39]{timevsthread.png}
+    \caption{Effect of concurrent access to shared library with increasing number of threads. }
+    \label{fig:timevsthread.png}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.39]{explaination.png}
+    \caption{Interconnect congestion and caching are two competing factors. }
+    \label{fig:explaination.png}
+\end{figure}
+
+
