@@ -1,1 +1,40 @@
-Hello Future.
+
+Having analyzed the impact of shared code from the perspective of locality and congestion,
+we are in a position to suggest some potential improvements that can help to mitigate the
+overheads due to NUMA architecture in context of shared libraries.
+
+The default NUMA scheduler currently loads the shared library on the node that triggered
+the page-fault for the first library page, which is random. It can be on any of the NUMA nodes.
+Such an algorithm is speculative, in the sense that, it expects in future, there may be processes
+closer to this node which may potentially use this shared library, and the amortized performance
+penalty is not much. However, this may penalize the currently executing program, in case the library
+is not loaded on the local node. There are some alternatives, in which we can certainly do better
+than the default library placement.
+
+\textbf{Performance-aware loading} Whenever a program executes, first of all the dynamic loader is
+invoked with task to load all the shared libraries the program was linked against (if not already loaded).
+The programmer knows which all cores he is going to use, for example, if the programmer uses cores from 
+two of the four sockets, and the shared library was not already loaded, it seems reasonable to load
+the shared library on one of the two nodes. Programmer can explicitly request such a loading or the
+compiler may identify this during code analysis, and add relevant information in the binary. This
+algorithm comes with almost no overhead, just a slight optimization to make the loader NUMA-aware.
+
+\textbf{User text Replication} Another plausible alternative is replication, which is essentially making
+additional copies of the text-section, so that no access for instruction needs to go over the interconnect.
+The solution sounds great as it completely eliminates the NUMA overhead but it should be noted that it has
+its own costs. It introduces a new problem of keeping all replicated copies in sync, which is a less severe
+problem for shared code as it is read-only. The kernel will however, still need to sync every node if any 
+of them undergo a page-fault. The advantage being the system can be implemented transparently in the
+kernel and the programmer doesn't has to know about it.
+
+\textbf{Distributed Loading} Another possible solution is loading parts of shared library accross all the
+NUMA nodes. Such a solution will prevent shared library from becoming a traffic hotspot and also amortize
+the cost of remote NUMA access. The system however will be more complicated as the kernel will need to
+keep track of pages on both remote and local nodes and seems wrothwhile only if the benefits outnumber the
+complexities.
+
+In our future works, we aim to further explore these ideas and implement some of these and present the
+outcome of our implementations and how they fare with the challenges presented in this work. One possible
+direction of our work can be to use \textit{carefour} \cite{Dashti:2013:TMH:2490301.2451157}, and possibly 
+apply their solution in context of shared libraries, as they seem to address similar set of problems.
+

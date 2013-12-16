@@ -1,1 +1,25 @@
-And we conclude.
+
+In this paper, we presented a comprehensive analysis of shared library performance
+on NUMA architectures. We begin by stating possibility of a performance hit but based
+on the results from our experiments, we can conclude that the effect of NUMA overhead
+due to non-locality of memory is not as pronounced for shared-code as it is for data.
+This is primarily because shared-code is read-only, and therefore exhibits better cache
+usage. Based on our experiments, we found that for zipf distribution, 
+(which most closely resembles the practical case) the
+performance overhead in worst case was found to be about 11\%.
+This was when library and thread were scheduled on farthest nodes. We also found that
+NUMA overhead increases with increasing library sizes but never exceeds 15\% worst
+case overhead.
+
+We also found that when multiple threads concurrently try to access the shared-code,
+the performance drops and keeps on dropping linearly as more threads are added to the
+system. With 24 threads accessing the library concurrently, the overhead due interconnect
+congestion, is as much as 5x times the single-thread case. This is in agreement to the
+observation by Dashti et al.\cite{Dashti:2013:TMH:2490301.2451157}, that interconnect congestion
+due to multiple threads accessing the data can hurt the performance more than NUMA penalty
+would.
+
+To address both these problems together, page replication happens to be the best solution.
+We have also discussed couple of other solutions that can possibly improve performance, by
+solving one or both of these problems. In our future works, we plan to explore these ideas
+further and come up with a working solution.

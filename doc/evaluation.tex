@@ -6,11 +6,11 @@ We discuss each of these seperately in following sections.
 
 \subsubsection{Remote vs Local Library} \label{sec:remoteVsLocal}
 In previous section, we computed the interconnect overhead and claimed that similar overhead should 
-exist in case when shared code is being fetched from remote node.
-To verify our claim, we loaded our generated shared library with 0.1 million functions.
-The scheduler placed the shared library on node N3.
-Then we created a thread which called functions from this library in sequential order with offset equal to cache size, 
-which means we called functions in a way that every next function called could be a cache miss.
+also exist in case when shared code is being fetched from a remote node.
+To verify our claim, we ran our experiments on a shared library with 0.1 million functions, amounting to
+about 60 MBs of text section. The scheduler placed the shared library on node N3.
+Then we created a thread which called functions from this library in sequential order with an offset equal to 
+L3 cache size, which means we called functions in a way that every next function called could be a cache miss.
 We ran this thread multiple times on each of the four nodes $N0, N1, N2$ and $N3$.
 The aggregated results are shown in figure \ref{fig:remoteVsLocal}.
 
@@ -22,20 +22,32 @@ The aggregated results are shown in figure \ref{fig:remoteVsLocal}.
 \end{figure}
 
 We measured the total number of CPU cycles consumed, stalled cycles and page faults in each case.
-We observed that in the case when our main thread was running locally (i.e. on node N3), it consumed minimum number of CPU cycles.
+We observed that in the case when our thread was running locally (i.e. on node N3), it consumed minimum number of CPU cycles.
 Number of stalled cycles were also minimum when library is placed locally, high number of stalled cycles in remote case indicates
 that lot of CPU cycles were idle due slow for data fetch over the interconnect.
-We measured page faults to make sure that we are fetching equal number of library pages in all four cases, 
-and number of page faults were equal in all four cases.
+We measured page faults to make sure that we are fetching equal number of library pages in all four cases.
+As expected, the number of page faults was found to be equal in all four cases.
 
 It can be verified that N0 and N3 being on the opposite corners of diagonal, have the maximum interconnect delays.
 The results exhibit a similar pattern, as in, maximum cycles are consumed by node N0 and the least cycles for the local node N3.
+The maximum slowdown is for the farthest node and was found to be 12.9\%.
+Based upon the interconnect delays, we may expect the execution on remote node along diagonal to perform 2x slower compared to local
+execution, which is not the case. This means that CPU caches combined with prefetching, lessen the performance hit that
+could otherwise be observed.
 
 \subsubsection{Small vs Big functions in Library}
 
 In our previous experiment, size of each function was found to be approximately 600 bytes. We believed that with smaller size
 functions, there will be less spatial locality and we could see an increased impact on the performance. In this case, the number
-of functions increased
+of functions was increased, but the size of each function was reduced to approximately 140 bytes per function.\\
+The generated functions looked like this:
+
+\texttt{ int f_i()\{return i;\} }
+
+These functions were indexed as usual and called sequentially with an offset equal to L3 cache size, same as in previous case.
+Other experimental settings were similar to previous section and shared library was also placed on Node3.
+The results for this are shown in figure \ref{fig:smallFunc}.
+
 \begin{figure}
     \centering
     \includegraphics[scale=0.38]{smallFunc.png}
@@ -43,18 +55,13 @@ of functions increased
     \label{fig:smallFunc}
 \end{figure}
 
-We tried to make smallest possible functions which look like this:
 
-\texttt{ int f_i()\{return i;\} }
-
-with size of 138 Bytes for each function.
-With small sized functions we wanted to see if instruction caching can help to even out the impact of remote library fetch.
-Figure \ref{fig:smallFunc} shows the result.
-Experimental settings were similar to section \ref{sec:remoteVsLocal}, shared library was on Node03 and we ran main thread on each of the four nodes.
-The results we observed showed similar behavior as in section \ref{sec:remoteVsLocal}.
-Number of CPU cycles consumed by remote nodes were more than those consumed by the local nodes, and size of the function does not matter for remote and local instruction fetching.
-
-
+It can be seen that the overall execution takes fewer cycles.
+This is so because the functions in this case were simpler and compiler could generate better code for them.
+The maximum slowdown is again for the farthest node and was found to be close to 39.7\%.
+However, it can also be seen that the effect of library being on the remote node is more pronounced here compared to the previous case.
+We believe that this is because in the previous case, a prefetched function would exhibit a certain spatial locality of 600 bytes,
+which is reduced to 140 bytes in this case.
 
 \subsubsection{Various probability distributions of function calls}
 
@@ -72,22 +79,21 @@ Number of CPU cycles consumed by remote nodes were more than those consumed by t
     \label{fig:zipfDistribution}
 \end{figure}
 
-Till now we were calling the functions from the shared library in sequential order.
-We wanted to vary our function calling pattern to random and zipfian distributions.
-In reality it is not necessary that an application is using all the functions of a library and in sequential order.
-Instruction caching favors sequential order and to negate the effect of caching we wanted to test random and zipfian distributions.
+Until now we were calling the functions from the shared library in a sequential order.
+In real application scenarios it is not necessarily the case that an application is using all the functions 
+of a library and that too in sequential order. In an attempt to simulate some real application scenarios,
+we tried varying our function calling pattern to random and zipfian distributions.
 
-\textbf{Sequential} - Figure \ref{fig:remoteVsLocal} shows the results for sequential calling pattern
+\textbf{Sequential} - Figure \ref{fig:remoteVsLocal} shows the results for sequential calling pattern\\
+\textbf{Random} - Figure \ref{fig:randomDistribution} shows the results for calling library functions in random order.\\
+\textbf{Zipf} - Figure \ref{fig:zipfDistribution} shows the results for calling library functions in zipfian order.\\
 
-\textbf{Random} - Figure \ref{fig:randomDistribution} shows the results for calling library functions in random order.
+The maximum slowdown was again for the farthest node in each of the two cases. The performance impact was 12.05\% for
+the random distribution, whereas it was 11.57\% for the zipfian order. According to zipfian distribution,
+there will be a bunch of functions which will be called more frequently than others. Therefore, the instruction cache
+can perform better in this case and consequently the performance impact can be lesser.
 
-\textbf{Zipf} - Figure \ref{fig:zipfDistribution} shows the results for calling library functions in zipfian order.
-According to zipfian distribution there will be a bunch of functions which will be called more frequently than others.
-Therefore instruction caching will favor the performance in this case.
-Due to which the difference in the CPU cycles consumed by N3 (local) and N0,N1,N2 (remote) is not great.
-
-
-\subsubsection{Varied Library Sizes}
+\subsubsection{Impact of Library Sizes}
 
 \begin{figure}
     \centering
@@ -96,44 +102,77 @@ Due to which the difference in the CPU cycles consumed by N3 (local) and N0,N1,N
     \label{fig:slowdownWithSize.png}
 \end{figure}
 
-Our shared library size in all the above experiments was 60MB.
-In this section we will vary the size of library and find the variation in the slowdown.
-We generated libraries of sizes varying from 32KB to 21MB, see Figure \ref{fig:slowdownWithSize.png}.
+In all of the above experiments, the shared library we used had about 60 MB of text-section.
+As discussed earlier, most of the modern libraries are lesser than 20 MBs, and very few are of
+order of 40 MBs. In this section we will vary the text-section size for the libraries and see plot
+the impact on system performance.
+
+As the size of text-section is directly proportional to the number of functions, we vary the size by simply 
+increasing the number of functions. We generated libraries of sizes varying from 32KB to 21MB, see Figure \ref{fig:slowdownWithSize.png}.
 We kept the size of each function same at around 600 Bytes, and increased the number of functions available in each library.
-When the library is small enough to fit in the cache, there won't be any instruction fetches across interconnect.
-But with the increasing size of library, it will be tough to get the whole library in cache in single fetch.
-Therefore library instructions will be fetched as and when needed.
+We believe that when the library will be small enough to fit in the cache, there will be very few instruction fetches across the interconnect.
+But with the increasing sizes, its likely that there will be more cache misses impacting the performance.
 
-The main thread calls the library functions in sequential order.
-And number of calls made by the main thread is equal to the number of functions available in the library.
-For example, our 32KB library had 50 functions and main thread made 50 calls.
-Reason behind not doing equal number of calls for all the libraries was to avoid the page fault factor in CPU cycles measured.
-Lets say we do one million calls for a library with ten thousand functions, some functions will be called repeatedly in cyclic order and will cause page faults.
-Setup was very much similar to above experiments, we had our library on one node and main thread ran on all the four nodes.
-We then measure the CPU cycles consumed by local and remote node for each library.
-The ratio of CPU cycles consumed by remote node over local node gave us the slowdown.
+To measure this impact we introduce the following metric:
+\begin{dmath}
+\label{eqn:cyclesPerCall}
+N_{cyclesPerCall} =  N_{totalElapsedCycles} / numFunctionCalls
+\end{dmath}
 
+This metric is necesarry to compare performance across libraries of two different sizes, as with increased sizes, the number
+of page-faults to load the library into memory will also increase.
+
+The main thread calls the library functions in sequential order, each function being only called once.
+Setup was very much similar to above experiments, we had our library on one node and main thread was made to run on 
+each of the four nodes. For our comparision, we selected the local node (housing the shared library) and farthest node
+from this local node, and computed the ratio of their $N_{cyclesPerCall}$ metric as follows:
+\begin{dmath}
+\label{eqn:slowdown}
+R_{slowdown} =  N\_Far_{cyclesPerCall} / N\_Local_{cyclesPerCall}
+\end{dmath}
+
+We then plot the values of $R_{slowdown}$ for different values of library text-section sizes,
 The result is shown in Figure \ref{fig:slowdownWithSize.png}.
-We observed that when the library is small enough to fit in the cache, not much slowdown is observed.
-It has even gone to negative in some cases.
-But as the size of library increases and instructions are fetched over interconnect, we see that the slowdown has increased.
-It is 14\% for 21MB library.
-
-
-
+As expected, we found that when the library is small enough to fit in the cache, not much slowdown is observed.
+It has even gone to negative in some cases. But as the size of library increases and the cache misses increase,
+we see the the effect of slowdown becomes more pronounced. The slowdown was found to be about 14\% for a library
+with 21MB of text section, but later stabilizes around this value.
 
 \begin{figure}
     \centering
-    \includegraphics[scale=0.39]{timevsthread.png}
-    \caption{Effect of concurrent access to shared library with increasing number of threads. }
+    \includegraphics[scale=0.39]{timevsthread_noMem.png}
+    \caption{Effect of concurrent access to shared library on increasing the number of threads.}
     \label{fig:timevsthread.png}
 \end{figure}
 
-\begin{figure}
-    \centering
-    \includegraphics[scale=0.39]{explaination.png}
-    \caption{Interconnect congestion and caching are two competing factors. }
-    \label{fig:explaination.png}
-\end{figure}
+\subsection{Impact of congestion}
+Dashti et al. \cite{Dashti:2013:TMH:2490301.2451157} claim that in modern NUMA systems, wire-delays
+are not the only source of performance hits, but congestion on interconnect links and in memory 
+controllers can also dramatically hurt performance. They propose an algorithm which avoids, traffic
+hotspots to prevent congestion on interconnect and memory controllers.
 
+In case of data, an application may exploit data-level parallelism by splitting the data, such that
+each thread mostly works on a distinct data-set. In such a scenario, threads are lightly coupled and
+is ideal for parallelism. It also doesn't makes much sense for multiple threads to operate on 
+same data set in parallel, and therefore it is less likely that traffic hotspots exist in such a system,
+and even if they do exist, can be avoided by careful allocation of data.\\
+Such a situation, is however more likely to happen in case of shared libraries, as they can only have
+a single copy across the system, making the NUMA node housing the library, a potential traffic hotspot.
 
+In the previous sections, all our experiments were conducted independently, that is, the shared library
+was being accessed only by a single thread. In real application scenarios, multiple threads and processes
+can access shared code concurrently. In this section, we present an analysis of what happens when multiple
+threads try to access the library concurrently.\\
+For this analysis, we are using a smaller more-realistic shared library with 10k functions amounting to about 20M 
+of text-section. The shared library was placed on Node 0. The driver function that calls the functions from 
+the library can now be executed concurrently by multiple threads.
+We don't modify any shared-data, therefore we didn't need any kind of locking or synchronization mechanisms.
+
+Figure \ref{fig:timevsthread.png} shows the plot of time taken for n-threads to execute 40k function calls from
+the library for different values of n. It can be seen that the curve is nearly flat in the beginning, but picks up
+later with increase in congestion at the interconnect and/or memory controller.
+
+We also tried various combinations, the results of which are presented below:
+\textbf{}
+\begin{verbatim}
+\end{verbatim}

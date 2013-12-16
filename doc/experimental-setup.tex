@@ -47,6 +47,14 @@ T_{NoCFlush} \approx T_{decodeAndExecute}
 From \ref{eqn:NoCacheFetch} and \ref{eqn:cacheFetch}, we can compute the value for $T_{MemFetch}$, the
 results for which are labeled in the following table (all entries in clock ticks):
 
+\begin{figure}
+    \centering
+    \includegraphics[scale=0.38]{hypercube.png}
+    \caption{4-node NUMA topology, N1, N2 and N3 are respectively horizontal, vertical and diagonal neighbors of N0}
+    \label{fig:remoteVsLocal}
+\end{figure}
+
+
 \begin{center}
 \begin{tabular}{c|c|c|c}
 \hline
