@@ -24,7 +24,7 @@ The aggregated results are shown in figure \ref{fig:remoteVsLocal}.
 We measured the total number of CPU cycles consumed, stalled cycles and page faults in each case.
 We observed that in the case when our thread was running locally (i.e. on node N3), it consumed minimum number of CPU cycles.
 Number of stalled cycles were also minimum when library is placed locally, high number of stalled cycles in remote case indicates
-that lot of CPU cycles were idle due slow for data fetch over the interconnect.
+that a lot of CPU cycles were idle due slowdown for data fetch over the interconnect.
 We measured page faults to make sure that we are fetching equal number of library pages in all four cases.
 As expected, the number of page faults was found to be equal in all four cases.
 
