@@ -1,9 +1,9 @@
 
-Most modern multicore systems these days are NUMA, which means they have multiple memory comtrollers
+Most modern multicore systems these days are Non Uniform Memory Architecture (NUMA), which means they have multiple memory controllers
 with non-uniform access latencies across them. There has been significant amount of work done in exploring and 
 mitigating performance penalty due to NUMA overhead. In previous works, NUMA-aware schedulers were proposed,
 sometimes with an objective of keeping data close to the processors working on them and sometimes to attain a 
-tradeoff between data locality and cache contention. \\
+trade-off between data locality and cache contention. \\
 However, the effect of instructions on process' performance in context of NUMA has not been explored yet.
 In this work, we present an analysis about the performance hit on processes due to instructions on NUMA machines.
 We limit our focus to the impact of shared code, which by definition has a single copy and resides on one of the NUMA nodes.

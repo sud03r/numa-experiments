@@ -1,15 +1,15 @@
 
-With the constantly increasing number of cores in modern multicore systems, Non-uniform memory architectures
+With the constantly increasing number of cores in modern multicore systems, non-uniform memory architectures
 are becoming more and more common. In its simplest form, a NUMA can have two processors with local memories connected
 to each other via an interconnect. Naturally, access to local memory is faster than the remote by a factor greater than 1,
-called the numa factor or numa overhead. With more processors, the interconnections become more complex, and the numa factor
+called the numa-factor or numa-overhead. With more processors, the interconnections become more complex, and the numa factor
 can also be different for different pair of nodes.
 
 With the introduction of NUMA architectures, problems with respect to data locality becoming bottleneck for application performance
 has drawn significant academic attention. Previous work by Brecht\cite{Brecht:1993:IPA:1295480.1295481} and 
 Broquedis et al.\cite{numaScheduling} explore placement decisions in context of data locality.
 In another recent work \cite{Dashti:2013:TMH:2490301.2451157}, the authors claim that contrary to older systems,
-modern NUMA hardware has much smaller remote wire delays, and so remote access costs per se are not the main 
+modern NUMA hardware has much smaller remote wire delays, and so remote access costs are not the main 
 concern for performance, instead, congestion on memory controllers and interconnects, caused by memory traffic 
 from data-intensive applications, hurts performance a lot more.
 
