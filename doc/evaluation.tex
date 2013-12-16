@@ -181,12 +181,16 @@ Core 3 : 386.42 ms
 
 Number of running threads : 2
 Core 0 and  4 : 387.20 (Local memory + shared cache)
-Core 1 and  2 : 402.50 (Remote memory + No shared cache)
-Core 3 and  7 : 405.48 (Remote memory + shared cache)
+Core 1 and  2 : 402.50 (Remote memory + 
+                        No shared cache)
+Core 3 and  7 : 405.48 (Remote memory +
+                        shared cache)
 
 Number of running threads : 3
-Core 0, 4 and 8 : 392.31 (All three local + shared cache)
-Core 1, 2 and 3 : 411.31 (All remote + No shared cache)
+Core 0, 4 and 8 : 392.31 (All three local +
+                          shared cache)
+Core 1, 2 and 3 : 411.31 (All remote + 
+                          No shared cache)
 \end{verbatim}
 
 Based upon these values, it can be inferred that there is a performance overhead, whenever a new thread is
